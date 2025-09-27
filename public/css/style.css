@@ -1,0 +1,151 @@
+/* --- ESTILOS GERAIS E BACKGROUND --- */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+}
+
+body {
+    /* Substitua a linha abaixo pela nova imagem */
+    background-image: url('../images/Untitled_Backlogin.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Camada escura sobre o fundo para dar contraste ao formulário */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 0;
+}
+
+/* --- CONTAINER DO LOGIN --- */
+.login-container {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 400px;
+    box-sizing: border-box;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+/* --- ESTILO AJUSTADO PARA A SUA LOGO ESPECÍFICA --- */
+.login-container .logo {
+    max-width: 250px; /* Aumentamos a largura para a logo que é mais comprida */
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.login-container h2 {
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+/* --- GRUPO DE INPUTS --- */
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #555;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+/* --- CAMPO DE SENHA COM ÍCONE DE OLHO --- */
+.password-wrapper {
+    position: relative;
+}
+
+.password-wrapper input {
+    padding-right: 45px;
+}
+
+.toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #888;
+}
+
+/* --- BOTÃO DE LOGIN --- */
+button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    background-color: #28a745;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+/* --- MENSAGEM DE ERRO --- */
+.error-message {
+    color: #D8000C;
+    background-color: #FFBABA;
+    border: 1px solid #D8000C;
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+/* --- RESPONSIVIDADE PARA CELULARES --- */
+@media (max-width: 480px) {
+    .login-container {
+        padding: 25px;
+    }
+
+    .login-container h2 {
+        font-size: 20px;
+    }
+
+    .login-container .logo {
+        max-width: 200px; /* Ajusta o tamanho da logo para telas menores */
+    }
+}

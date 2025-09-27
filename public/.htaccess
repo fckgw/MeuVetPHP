@@ -1,0 +1,9 @@
+RewriteEngine On
+
+# Se a requisição não for para um arquivo existente...
+RewriteCond %{REQUEST_FILENAME} !-f
+# E se a requisição não for para uma pasta existente...
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# ...redirecione tudo para o index.php
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
