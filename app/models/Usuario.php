@@ -16,5 +16,12 @@ class Usuario {
         $resultado = $stmt->get_result();
         return $resultado->fetch_assoc();
     }
+
+
+     public function getAll() {
+        $sql = "SELECT id, nome FROM usuarios ORDER BY nome";
+        $resultado = $this->conexao->query($sql);
+        return $resultado->fetch_all(MYSQLI_ASSOC);
+    }
 }
 ?>

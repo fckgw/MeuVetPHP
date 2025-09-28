@@ -17,6 +17,7 @@
                 <!-- ============================================= -->
                 <img src="/public/images/MeuVET-Logo.png" alt="Logo MeuVET" class="logo">
             </div>
+            
             <nav class="sidebar-nav">
                 <a href="/public/dashboard" class="<?php echo ($activePage === 'dashboard') ? 'active' : ''; ?>">
                     <i class="fa-solid fa-chart-line"></i> Dashboard
@@ -27,7 +28,7 @@
                 <a href="/public/animais" class="<?php echo ($activePage === 'animais') ? 'active' : ''; ?>">
                     <i class="fa-solid fa-paw"></i> Animais
                 </a>
-                <a href="#" class="<?php echo ($activePage === 'agenda') ? 'active' : ''; ?>">
+                <a href="/public/agenda" class="<?php echo ($activePage === 'agenda') ? 'active' : ''; ?>">
                     <i class="fa-solid fa-calendar-days"></i> Agenda
                 </a>
             </nav>

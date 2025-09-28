@@ -1,9 +1,6 @@
 <?php
-// Usamos 'require_once' para garantir que o model só seja carregado uma vez.
 require_once __DIR__ . '/../models/ClienteModel.php';
 
-// Verificamos se a classe JÁ EXISTE antes de tentar declará-la.
-// Esta é a camada final de segurança contra o erro.
 if (!class_exists('ClienteController')) {
     class ClienteController {
         private $clienteModel;
@@ -26,7 +23,8 @@ if (!class_exists('ClienteController')) {
             require_once __DIR__ . '/../views/layout/footer.php';
         }
 
-        public function create() {
+        // RENOMEADO de create para adicionar
+        public function adicionar() {
             $pageTitle = 'Adicionar Cliente';
             $activePage = $this->activePage;
             require_once __DIR__ . '/../views/layout/header.php';
@@ -34,7 +32,8 @@ if (!class_exists('ClienteController')) {
             require_once __DIR__ . '/../views/layout/footer.php';
         }
 
-        public function edit($id) {
+        // RENOMEADO de edit para editar
+        public function editar($id) {
             $cliente = $this->clienteModel->getById($id);
             if (!$cliente) {
                 header('Location: /public/clientes');
@@ -47,7 +46,8 @@ if (!class_exists('ClienteController')) {
             require_once __DIR__ . '/../views/layout/footer.php';
         }
 
-        public function store() {
+        // RENOMEADO de store para salvar
+        public function salvar() {
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $this->clienteModel->create($_POST);
                 header('Location: /public/clientes');
@@ -55,7 +55,8 @@ if (!class_exists('ClienteController')) {
             }
         }
 
-        public function update($id) {
+        // RENOMEADO de update para atualizar
+        public function atualizar($id) {
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $this->clienteModel->update($id, $_POST);
                 header('Location: /public/clientes');
@@ -63,7 +64,8 @@ if (!class_exists('ClienteController')) {
             }
         }
 
-        public function delete($id) {
+        // RENOMEADO de delete para excluir
+        public function excluir($id) {
             $this->clienteModel->delete($id);
             header('Location: /public/clientes');
             exit();

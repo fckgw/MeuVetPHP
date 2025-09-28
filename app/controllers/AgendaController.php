@@ -1,78 +1,83 @@
 <?php
+require_once __DIR__ . '/../models/AgendaModel.php';
 require_once __DIR__ . '/../models/AnimalModel.php';
-require_once __DIR__ . '/../models/ClienteModel.php';
+require_once __DIR__ . '/../models/Usuario.php';
 
-if (!class_exists('AnimalController')) {
-    class AnimalController {
+if (!class_exists('AgendaController')) {
+    class AgendaController {
+        private $agendaModel;
         private $animalModel;
-        private $clienteModel;
-        private $activePage = 'animais';
+        private $usuarioModel;
+        private $activePage = 'agenda';
 
         public function __construct() {
             if (!isset($_SESSION['usuario_id'])) {
                 header('Location: /public/login');
                 exit();
             }
+            $this->agendaModel = new AgendaModel();
             $this->animalModel = new AnimalModel();
-            $this->clienteModel = new ClienteModel();
+            $this->usuarioModel = new Usuario();
         }
 
         public function index() {
-            $animais = $this->animalModel->getAll();
-            $pageTitle = 'Animais';
+            $consultas = $this->agendaModel->getAll();
+            $pageTitle = 'Agenda de Consultas';
             $activePage = $this->activePage;
             require_once __DIR__ . '/../views/layout/header.php';
-            require_once __DIR__ . '/../views/animais/index.php';
+            require_once __DIR__ . '/../views/agenda/index.php';
             require_once __DIR__ . '/../views/layout/footer.php';
         }
         
         // RENOMEADO de create para adicionar
         public function adicionar() {
-            $clientes = $this->clienteModel->getAll();
-            $pageTitle = 'Adicionar Animal';
+            $animais = $this->animalModel->getAll();
+            $veterinarios = $this->usuarioModel->getAll();
+            $pageTitle = 'Agendar Nova Consulta';
             $activePage = $this->activePage;
             require_once __DIR__ . '/../views/layout/header.php';
-            require_once __DIR__ . '/../views/animais/create.php';
+            require_once __DIR__ . '/../views/agenda/create.php';
             require_once __DIR__ . '/../views/layout/footer.php';
         }
         
         // RENOMEADO de store para salvar
         public function salvar() {
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $this->animalModel->create($_POST);
-                header('Location: /public/animais');
+                $this->agendaModel->create($_POST);
+                header('Location: /public/agenda');
                 exit();
             }
         }
         
         // RENOMEADO de edit para editar
         public function editar($id) {
-            $animal = $this->animalModel->getById($id);
-            $clientes = $this->clienteModel->getAll();
-            if (!$animal) {
-                header('Location: /public/animais');
+            $consulta = $this->agendaModel->getById($id);
+            $animais = $this->animalModel->getAll();
+            $veterinarios = $this->usuarioModel->getAll();
+            if (!$consulta) {
+                header('Location: /public/agenda');
                 exit();
             }
-            $pageTitle = 'Editar Animal';
+            $pageTitle = 'Editar Agendamento';
             $activePage = $this->activePage;
             require_once __DIR__ . '/../views/layout/header.php';
-            require_once __DIR__ . '/../views/animais/edit.php';
+            require_once __DIR__ . '/../views/agenda/edit.php';
             require_once __DIR__ . '/../views/layout/footer.php';
         }
         
         // RENOMEADO de update para atualizar
         public function atualizar($id) {
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $this->animalModel->update($id, $_POST);
-                header('Location: /public/animais');
+                $this->agendaModel->update($id, $_POST);
+                header('Location: /public/agenda');
                 exit();
             }
         }
         
         // RENOMEADO de delete para excluir
         public function excluir($id) {
-            $this->animalModel->delete($id);
-            header('Location: /public/animais');
+            $this->agendaModel->delete($id);
+            header('Location: /public/agenda');
             exit();
         }
     }
