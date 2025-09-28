@@ -1,75 +1,80 @@
 <?php
-// Habilite a exibição de erros durante o desenvolvimento
+// ATENÇÃO: Não deve haver NENHUM espaço ou linha em branco antes desta tag.
+
 ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 session_start();
 
-// Pega a URL da requisição a partir do parâmetro criado no .htaccess
-$url = isset($_GET['url']) ? $_GET['url'] : 'login';
+// ===================================================================
+// ROTEAMENTO PRINCIPAL
+// A lógica aqui é: decidir a rota PRIMEIRO, e SÓ DEPOIS carregar
+// e executar o controller necessário.
+// ===================================================================
+
+$url = isset($_GET['url']) ? $_GET['url'] : '';
 $url = rtrim($url, '/');
-$url_parts = explode('/', $url);
+$parts = explode('/', $url);
+$rota = $parts[0] ?: 'login';
 
-// Roteamento Básico
-// A primeira parte da URL define a rota
-$rota = $url_parts[0];
+// --- Lógica de Redirecionamento ANTES de qualquer output ---
+// Se a rota for 'login' e o usuário já estiver logado, redireciona AGORA.
+if ($rota === 'login' && isset($_SESSION['usuario_id'])) {
+    header('Location: /public/dashboard');
+    exit();
+}
 
+// Carrega os controllers necessários apenas quando forem usados
 switch ($rota) {
-
-    case 'dashboard': // NOVA ROTA
-    case 'painel': // ROTA ANTIGA APONTA PARA A NOVA
-        // 1. Proteção: Verifica se o usuário está logado
-        if (!isset($_SESSION['usuario_id'])) {
-            header('Location: login');
-            exit();
-        }
-        
-        // 2. Chama o Controller que vai cuidar do Dashboard
-        require_once __DIR__ . '/../app/controllers/DashboardController.php';
-        $controller = new DashboardController();
-        $controller->index(); // Método que vai carregar a página
-        break;
-
     case 'login':
-        // Se já estiver logado, vai para o painel
-        if (isset($_SESSION['usuario_id'])) {
-            header('Location: painel');
-            exit();
-        }
-        // Carrega a view de login
+        // Se chegou aqui, o usuário não está logado. Apenas mostra a view.
         require_once __DIR__ . '/../app/views/login.php';
         break;
 
     case 'auth':
-        // Ação de autenticar (o formulário de login aponta para cá)
         require_once __DIR__ . '/../app/controllers/AuthController.php';
-        $authController = new AuthController();
-        $authController->login();
-        break;
-
-    case 'painel':
-        // Protege a página do painel
-        if (!isset($_SESSION['usuario_id'])) {
-            header('Location: login');
-            exit();
-        }
-        require_once __DIR__ . '/../app/views/painel.php'; // Crie esta view
+        $controller = new AuthController();
+        $controller->login();
         break;
 
     case 'logout':
-        require_once __DIR__ . '/../app/controllers/AuthController.php'; // Você pode criar um método logout
-        // Lógica de logout aqui (session_destroy, etc)
-        session_destroy();
-        header('Location: login');
-        exit();
+        require_once __DIR__ . '/../app/controllers/AuthController.php';
+        $controller = new AuthController();
+        $controller->logout();
+        break;
+
+    case 'dashboard':
+        require_once __DIR__ . '/../app/controllers/DashboardController.php';
+        $controller = new DashboardController();
+        $controller->index();
+        break;
+
+    case 'clientes':
+        require_once __DIR__ . '/../app/controllers/ClienteController.php';
+        $controller = new ClienteController();
+        $acao = $parts[1] ?? 'index';
+        $id = $parts[2] ?? null;
+        if (method_exists($controller, $acao)) {
+            $controller->$acao($id);
+        } else {
+            http_response_code(404); echo "<h1>Ação não encontrada</h1>";
+        }
+        break;
+
+    case 'animais':
+        require_once __DIR__ . '/../app/controllers/AnimalController.php';
+        $controller = new AnimalController();
+        $acao = $parts[1] ?? 'index';
+        $id = $parts[2] ?? null;
+        if (method_exists($controller, $acao)) {
+            $controller->$acao($id);
+        } else {
+            http_response_code(404); echo "<h1>Ação não encontrada</h1>";
+        }
         break;
 
     default:
-        // Página não encontrada
         http_response_code(404);
         echo "<h1>Página não encontrada</h1>";
         break;
 }
-
-?>

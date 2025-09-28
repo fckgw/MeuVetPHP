@@ -1,107 +1,77 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - MeuVET</title>
-    <link rel="stylesheet" href="css/dashboard.css">
-    <!-- Chart.js para os gráficos -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-</head>
-<body>
-    <div class="dashboard-container">
-        <!-- Menu Lateral -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <img src="images/MeuVET-Logo.png" alt="Logo MeuVET" class="logo">
-            </div>
-            <nav class="sidebar-nav">
-                <a href="dashboard" class="active"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
-                <a href="#"><i class="fa-solid fa-users"></i> Clientes</a>
-                <a href="#"><i class="fa-solid fa-paw"></i> Animais</a>
-                <a href="#"><i class="fa-solid fa-calendar-days"></i> Agenda</a>
-            </nav>
-        </aside>
-
-        <!-- Conteúdo Principal -->
-        <main class="main-content">
-            <!-- Barra do Topo -->
-            <header class="top-bar">
-                <h1>Dashboard</h1>
-                <div class="user-info">
-                    <span>Olá, <?php echo htmlspecialchars($_SESSION['usuario_nome']); ?></span>
-                    <a href="logout" class="logout-btn">Sair</a>
-                </div>
-            </header>
-            
-            <!-- Conteúdo da Página -->
-            <div class="content">
-                <!-- Cards de KPIs (Indicadores) -->
-                <div class="kpi-cards">
-                    <div class="card">
-                        <h3>Consultas Hoje</h3>
-                        <p>5</p>
-                    </div>
-                    <div class="card">
-                        <h3>Novos Clientes (Mês)</h3>
-                        <p>12</p>
-                    </div>
-                    <div class="card">
-                        <h3>Animais Cadastrados</h3>
-                        <p>157</p>
-                    </div>
-                </div>
-
-                <!-- Gráficos -->
-                <div class="charts">
-                    <div class="chart-container">
-                        <h3>Consultas nos Próximos 7 Dias</h3>
-                        <canvas id="consultasChart"></canvas>
-                    </div>
-                    <div class="chart-container">
-                        <h3>Novos Animais por Mês</h3>
-                        <canvas id="animaisChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </main>
+<!-- Cards de KPIs (Indicadores) com dados dinâmicos -->
+<div class="kpi-cards">
+    <div class="card">
+        <h3><i class="fa-solid fa-stethoscope"></i> Consultas Hoje</h3>
+        <p><?php echo $kpiConsultasHoje; ?></p>
     </div>
+    <div class="card">
+        <h3><i class="fa-solid fa-user-plus"></i> Novos Clientes (Mês)</h3>
+        <p><?php echo $kpiNovosClientes; ?></p>
+    </div>
+    <div class="card">
+        <h3><i class="fa-solid fa-paw"></i> Total de Animais</h3>
+        <p><?php echo $kpiTotalAnimais; ?></p>
+    </div>
+</div>
 
-    <script>
-        // Gráfico 1: Consultas na Semana
-        const ctxConsultas = document.getElementById('consultasChart');
+<!-- Gráficos -->
+<div class="charts">
+    <div class="chart-container">
+        <h3>Consultas nos Próximos 7 Dias</h3>
+        <canvas id="consultasChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <h3>Novos Animais (Últimos 6 Meses)</h3>
+        <canvas id="animaisChart"></canvas>
+    </div>
+</div>
+
+<script>
+    // --- Gráfico 1: Consultas na Semana ---
+    const ctxConsultas = document.getElementById('consultasChart');
+    if (ctxConsultas) { // Verifica se o elemento existe antes de criar o gráfico
         new Chart(ctxConsultas, {
-            type: 'bar', // Tipo de gráfico: barras
+            type: 'bar',
             data: {
-                labels: ['Hoje', 'Amanhã', 'Dia 3', 'Dia 4', 'Dia 5', 'Dia 6', 'Dia 7'],
+                labels: <?php echo json_encode($consultasChartData['labels']); ?>,
                 datasets: [{
                     label: 'Nº de Consultas',
-                    data: [5, 8, 3, 5, 2, 3, 9], // DADOS DE EXEMPLO
+                    data: <?php echo json_encode($consultasChartData['data']); ?>,
                     backgroundColor: 'rgba(40, 167, 69, 0.7)',
                     borderColor: 'rgba(40, 167, 69, 1)',
-                    borderWidth: 1
+                    borderWidth: 1,
+                    borderRadius: 5
                 }]
             },
-            options: { scales: { y: { beginAtZero: true } } }
+            options: {
+                responsive: true,
+                scales: { y: { beginAtZero: true } },
+                plugins: { legend: { display: false } }
+            }
         });
+    }
 
-        // Gráfico 2: Novos Animais
-        const ctxAnimais = document.getElementById('animaisChart');
+    // --- Gráfico 2: Novos Animais por Mês ---
+    const ctxAnimais = document.getElementById('animaisChart');
+    if (ctxAnimais) { // Verifica se o elemento existe antes de criar o gráfico
         new Chart(ctxAnimais, {
-            type: 'line', // Tipo de gráfico: linha
+            type: 'line',
             data: {
-                labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+                labels: <?php echo json_encode($animaisChartData['labels']); ?>,
                 datasets: [{
                     label: 'Novos Animais',
-                    data: [10, 15, 8, 12, 20, 17], // DADOS DE EXEMPLO
-                    fill: false,
+                    data: <?php echo json_encode($animaisChartData['data']); ?>,
+                    fill: true,
+                    backgroundColor: 'rgba(0, 123, 255, 0.1)',
                     borderColor: 'rgb(0, 123, 255)',
-                    tension: 0.1
+                    tension: 0.3
                 }]
             },
-            options: { scales: { y: { beginAtZero: true } } }
+            options: {
+                responsive: true,
+                scales: { y: { beginAtZero: true } },
+                plugins: { legend: { display: false } }
+            }
         });
-    </script>
-</body>
-</html>
+    }
+</script>

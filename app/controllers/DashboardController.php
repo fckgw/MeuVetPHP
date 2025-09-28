@@ -1,24 +1,36 @@
 <?php
-// Futuramente, vamos precisar dos Models
-// require_once __DIR__ . '/../models/ConsultaModel.php';
-// require_once __DIR__ . '/../models/AnimalModel.php';
+require_once __DIR__ . '/../models/DashboardDataModel.php';
 
-class DashboardController {
+// Verificamos se a classe já existe para evitar erros de re-declaração.
+if (!class_exists('DashboardController')) {
+    class DashboardController {
 
-    public function index() {
-        // 1. Verificar se o usuário está logado (redundante, pois já fizemos no router, mas é uma boa prática)
-        if (!isset($_SESSION['usuario_id'])) {
-            header('Location: login');
-            exit;
+        public function index() {
+            if (!isset($_SESSION['usuario_id'])) {
+                header('Location: /public/login');
+                exit;
+            }
+
+            $dataModel = new DashboardDataModel();
+            
+            // Dados para os Cards
+            $kpiConsultasHoje = $dataModel->getKpiConsultasHoje();
+            $kpiNovosClientes = $dataModel->getKpiNovosClientesMes();
+            $kpiTotalAnimais = $dataModel->getKpiTotalAnimais();
+
+            // Dados para os Gráficos
+            $consultasChartData = $dataModel->getChartConsultasProximosDias();
+            $animaisChartData = $dataModel->getChartNovosAnimaisUltimosMeses();
+            
+            $pageTitle = 'Dashboard';
+            $activePage = 'dashboard';
+
+            // ATENÇÃO: A lógica que monta a página está aqui.
+            // O erro original apontava para esta linha como o início da saída de texto.
+            require_once __DIR__ . '/../views/layout/header.php';
+            require_once __DIR__ . '/../views/dashboard.php';
+            require_once __DIR__ . '/../views/layout/footer.php';
         }
-
-        // 2. Futuramente: Buscar dados do banco de dados
-        // $consultas = $consultaModel->getConsultasDaSemana();
-        // $novosAnimais = $animalModel->getNovosAnimaisPorMes();
-
-        // 3. Carregar a view do dashboard
-        require_once __DIR__ . '/../views/dashboard.php';
     }
 }
-
-?>
+// NADA MAIS DEVE EXISTIR ABAIXO DESTA LINHA
